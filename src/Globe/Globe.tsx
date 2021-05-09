@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { D3ZoomEvent, geoOrthographic, geoPath, select, zoom } from 'd3';
+import {
+  D3ZoomEvent,
+  geoOrthographic,
+  geoPath,
+  select,
+  zoom,
+  drag,
+  D3DragEvent,
+} from 'd3';
 
 import { useCountries } from './useCountries';
 
@@ -55,6 +63,11 @@ export interface GlobeProps {
   rotation?: [number, number, number];
 
   /**
+   * Drag sensitivity
+   */
+  dragSensitivity?: number;
+
+  /**
    * Min scroll value
    */
   minScroll?: number;
@@ -77,6 +90,7 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
     rotateY = 0,
     rotateZ = 0,
     rotation = [rotateX, rotateY, rotateZ],
+    dragSensitivity = 75,
     minScroll = 0.3,
     maxScroll = 20,
   } = rest;
@@ -122,6 +136,9 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
       const countriesPaths = svg.selectAll<SVGPathElement, PathDatum>('path');
       const globeCircle = svg.select<SVGCircleElement>('circle');
 
+      const countriesDataJoin = countriesPaths.data(countries).join('path');
+
+
       /**
        * Zoom behaviour
        */
@@ -141,20 +158,37 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
             pathGenerator.projection(projection);
 
             // Update selectors
-            countriesPaths
-              .data(countries)
-              .join('path')
-              .attr('d', pathGenerator);
             globeCircle.attr('r', projection.scale());
+            countriesDataJoin.attr('d', pathGenerator);
           }
         },
       );
 
-      // Apply zoom behaviour
-      svg.call(zoomBehaviour);
+      /**
+       * Drag behaviour
+       */
+      const dragBehaviour = drag<SVGSVGElement, SVGDatum>().on(
+        'drag',
+        (event: D3DragEvent<SVGSVGElement, SVGDatum, SVGDatum>) => {
+          const rotate = projection.rotate();
+          const k = dragSensitivity / projection.scale();
 
-      countriesPaths.data(countries).join('path').attr('d', pathGenerator);
+          // Update projection
+          projection.rotate([
+            rotate[0] + event.dx * k,
+            rotate[1] - event.dy * k,
+          ]);
+
+          pathGenerator.projection(projection);
+          countriesDataJoin.attr('d', pathGenerator);
+        },
+      );
+
+      // Apply zoom behaviour
+      svg.call(dragBehaviour).call(zoomBehaviour);
+
       globeCircle.attr('r', projection.scale());
+      countriesDataJoin.attr('d', pathGenerator);
     }
   }, [
     initialScale,
@@ -163,6 +197,7 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
     projection,
     countries,
     pathGenerator,
+    dragSensitivity,
   ]);
 
   return (
