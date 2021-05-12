@@ -9,9 +9,11 @@ import {
   D3DragEvent,
 } from 'd3';
 
-import { useCountries } from './useCountries';
+import { useCountries } from '../use-countries/use-countries';
 
 export interface GlobeProps {
+  svgStyle?: React.CSSProperties;
+  circleStyle?: React.CSSProperties;
   oceanColor?: string;
   landColor?: string;
 
@@ -82,6 +84,12 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
   const {
     oceanColor = '#eaedee',
     landColor = '#17181d',
+    svgStyle = {
+      fill: landColor,
+    },
+    circleStyle = {
+      fill: oceanColor,
+    },
     height = size,
     width = size,
     initialScale = size / 2,
@@ -138,7 +146,6 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
 
       const countriesDataJoin = countriesPaths.data(countries).join('path');
 
-
       /**
        * Zoom behaviour
        */
@@ -170,13 +177,13 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
       const dragBehaviour = drag<SVGSVGElement, SVGDatum>().on(
         'drag',
         (event: D3DragEvent<SVGSVGElement, SVGDatum, SVGDatum>) => {
-          const rotate = projection.rotate();
+          const [rotationX, rotationY] = projection.rotate();
           const k = dragSensitivity / projection.scale();
 
           // Update projection
           projection.rotate([
-            rotate[0] + event.dx * k,
-            rotate[1] - event.dy * k,
+            rotationX + event.dx * k,
+            rotationY - event.dy * k,
           ]);
 
           pathGenerator.projection(projection);
@@ -201,10 +208,17 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
   ]);
 
   return (
-    <svg ref={svgRef} width={width} height={height} fill={landColor}>
-      <circle cx={centerX} cy={centerY} r={circleR} fill={oceanColor} />
-      {countries.map(({ id }) => (
-        <path key={id} />
+    <svg ref={svgRef} width={width} height={height} style={svgStyle}>
+      <style>
+        {`
+          path:hover {
+            fill: blue;
+          }
+        `}
+      </style>
+      <circle cx={centerX} cy={centerY} r={circleR} style={circleStyle} />
+      {countries.map((country) => (
+        <path key={country.id} onClick={() => console.log(country)} />
       ))}
     </svg>
   );
