@@ -7,9 +7,23 @@ import {
   zoom,
   drag,
   D3DragEvent,
+  GeoProjection,
+  GeoPath,
+  GeoPermissibleObjects,
+  interpolate,
+  Selection,
 } from 'd3';
 
 import { useCountries } from '../use-countries/use-countries';
+import { CountryFeature } from '../use-countries/get-countries';
+
+interface SVGDatum {
+  width: number;
+  height: number;
+}
+
+type PathDatum = CountryFeature;
+type Rotation = [number, number] | [number, number, number];
 
 export interface GlobeProps {
   svgStyle?: React.CSSProperties;
@@ -62,7 +76,7 @@ export interface GlobeProps {
    * Alternatively to separately specifying each rotation axis, you
    * can provide them as an array [X,Y,Z]
    */
-  rotation?: [number, number, number];
+  rotation?: Rotation;
 
   /**
    * Drag sensitivity
@@ -126,20 +140,11 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
   );
 
   // Path generator
-  const pathGenerator = geoPath().projection(projection);
+  const pathGenerator = geoPath(projection);
 
   // Update `path` when `pathGenerator` changes
   React.useEffect(() => {
     if (svgRef.current && countries.length) {
-      interface SVGDatum {
-        width: number;
-        height: number;
-      }
-
-      interface PathDatum {
-        id: string;
-      }
-
       const svg = select<SVGSVGElement, SVGDatum>(svgRef.current);
       const countriesPaths = svg.selectAll<SVGPathElement, PathDatum>('path');
       const globeCircle = svg.select<SVGCircleElement>('circle');
@@ -207,6 +212,21 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
     dragSensitivity,
   ]);
 
+  function rotateTo(rotation: Rotation) {
+    if (!svgRef.current) {
+      return;
+    }
+    const svg = select<SVGSVGElement, SVGDatum>(svgRef.current);
+    const countriesPaths = svg.selectAll<SVGPathElement, PathDatum>('path');
+
+    rotateProjectionTo({
+      selection: countriesPaths,
+      projection,
+      pathGenerator,
+      rotation,
+    });
+  }
+
   return (
     <svg ref={svgRef} width={width} height={height} style={svgStyle}>
       <style>
@@ -217,9 +237,61 @@ export function Globe({ size = 400, ...rest }: GlobeProps) {
         `}
       </style>
       <circle cx={centerX} cy={centerY} r={circleR} style={circleStyle} />
-      {countries.map((country) => (
-        <path key={country.id} onClick={() => console.log(country)} />
+      {countries.map(country => (
+        <path key={country.id} onClick={() => rotateTo(country.properties.position)} />
       ))}
     </svg>
   );
 }
+
+const defaults = {
+  duration: 1000,
+};
+
+interface RotateToParams {
+  selection: Selection<SVGPathElement, PathDatum, SVGSVGElement, SVGDatum>;
+  projection: GeoProjection;
+  pathGenerator: GeoPath<any, GeoPermissibleObjects>;
+  duration?: number;
+  rotation: Rotation;
+}
+
+/**
+ * A function that makes a transition from current projection.rotation to
+ * given rotation
+ *
+ *
+ */
+export const rotateProjectionTo = ({
+  selection,
+  projection,
+  pathGenerator,
+  duration = defaults.duration,
+  rotation,
+}: RotateToParams) => {
+  // Store the current rotation and scale:
+  const currentRotate = projection.rotate();
+
+  // Update path generator with new projection
+  pathGenerator.projection(projection);
+
+  // Set  next rotation
+  const nextRotate = rotation;
+
+  // Create interpolator function
+  const r = interpolate(currentRotate, nextRotate);
+
+  // Update selection
+  selection
+    .transition()
+    .attrTween('d', d => t => {
+      projection.rotate(r(Math.pow(t, 0.33)));
+      pathGenerator.projection(projection);
+
+      // When interpolator returns null, Chrome throws errors for
+      // <path> with attribute d="null"
+      const pathD = pathGenerator(d);
+      return pathD !== null ? pathD : '';
+    })
+    .duration(duration);
+};

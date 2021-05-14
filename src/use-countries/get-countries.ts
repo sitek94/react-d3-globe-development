@@ -6,7 +6,7 @@ import {
   CountriesProperties,
 } from './get-properties';
 
-interface CountryFeature extends Feature {
+export interface CountryFeature extends Feature {
   properties: CountryProperties;
 }
 export type CountriesFeatures = CountryFeature[];
