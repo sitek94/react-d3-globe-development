@@ -1,15 +1,6 @@
-import { getFeatures, Feature, Features } from './get-features';
-import {
-  getProperties,
-  notFoundCountry,
-  CountryProperties,
-  CountriesProperties,
-} from './get-properties';
-
-export interface CountryFeature extends Feature {
-  properties: CountryProperties;
-}
-export type CountriesFeatures = CountryFeature[];
+import { CountriesFeatures, CountriesProperties, Features } from '../types';
+import { getFeatures } from './get-features';
+import { getProperties, notFoundCountry } from './get-properties';
 
 /**
  * Fetches both countries features and properties and then extends the features

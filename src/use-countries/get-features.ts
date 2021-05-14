@@ -1,10 +1,7 @@
 import { FeatureCollection } from 'geojson';
 import { feature } from 'topojson-client';
 import { Topology } from 'topojson-specification';
-import { Feature as BaseFeature, GeoJsonProperties, Geometry } from 'geojson';
-
-export type Feature = BaseFeature<Geometry, GeoJsonProperties>;
-export type Features = Feature[];
+import { Features } from '../types';
 
 /**
  * A fixed version of World Atlas Countries 110m

@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { getCountries, CountriesFeatures } from './get-countries';
+import { CountriesFeatures } from '../types';
+import { getCountries } from './get-countries';
 
 type Status = 'idle' | 'pending' | 'resolved' | 'rejected';
 

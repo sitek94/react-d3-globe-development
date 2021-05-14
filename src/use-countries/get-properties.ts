@@ -1,4 +1,5 @@
 import { csv } from 'd3';
+import { CountriesProperties, CountryProperties, Rotation } from '../types';
 
 /**
  * Countries Properties CSV
@@ -14,16 +15,7 @@ const countriesPropertiesUrl =
 
 type Columns = 'id' | 'name' | 'latitude' | 'longitude';
 
-type Position = [number, number];
-
-export interface CountryProperties {
-  id: string;
-  name: string;
-  position: Position;
-}
-export type CountriesProperties = CountryProperties[];
-
-const bermudaTrianglePosition: Position = [
+const bermudaTrianglePosition: Rotation = [
   25.027684437991375, -70.99627570018042,
 ];
 
