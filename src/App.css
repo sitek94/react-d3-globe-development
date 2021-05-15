@@ -1,0 +1,17 @@
+.react-d3-globe.orange {
+  --country-color: darkorange;
+  --country-hover-color: orangered;
+  --ocean-color: moccasin;
+}
+
+.react-d3-globe.violet {
+  --country-color: blueviolet;
+  --country-hover-color: purple;
+  --ocean-color: plum;
+}
+
+.react-d3-globe.blue {
+  --country-color: dodgerblue;
+  --country-hover-color: royalblue;
+  --ocean-color: lightblue;
+}

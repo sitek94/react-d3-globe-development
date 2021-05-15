@@ -1,13 +1,13 @@
-// import { Globe } from './Globe/NewGlobe';
 import { Globe } from './Globe/Globe';
+import './App.css' 
 
 function App() {
   return (
     <div>
-      <Globe width={250} height={250} />
-      <Globe width={250} height={250} />
-      <Globe width={250} height={250} />
-      <Globe width={750} height={750} />
+      <Globe size={500} />
+      <Globe className="orange" size={450} />
+      <Globe className="violet" size={375} />
+      <Globe className="blue" size={300} />
     </div>
   );
 }
