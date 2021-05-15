@@ -36,3 +36,9 @@ export type CountriesPathsSelection = Selection<
   SVGSVGElement,
   SVGDatum
 >;
+export type GlobeCircleSelection = Selection<
+  SVGCircleElement,
+  SVGDatum,
+  null,
+  undefined
+>;
