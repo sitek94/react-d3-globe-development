@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/react-d3-globe-development/static/js/main.b923d50a.chunk.js",
-    "main.js.map": "/react-d3-globe-development/static/js/main.b923d50a.chunk.js.map",
+    "main.js": "/react-d3-globe-development/static/js/main.0fbd6c6c.chunk.js",
+    "main.js.map": "/react-d3-globe-development/static/js/main.0fbd6c6c.chunk.js.map",
     "runtime-main.js": "/react-d3-globe-development/static/js/runtime-main.e0c21863.js",
     "runtime-main.js.map": "/react-d3-globe-development/static/js/runtime-main.e0c21863.js.map",
     "static/js/2.b9d1d49f.chunk.js": "/react-d3-globe-development/static/js/2.b9d1d49f.chunk.js",
@@ -12,6 +12,6 @@
   "entrypoints": [
     "static/js/runtime-main.e0c21863.js",
     "static/js/2.b9d1d49f.chunk.js",
-    "static/js/main.b923d50a.chunk.js"
+    "static/js/main.0fbd6c6c.chunk.js"
   ]
 }
