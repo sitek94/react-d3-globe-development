@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import pkg from '../../package.json';
 import { createStyles, Colors } from '../styles/create-styles';
+import { CountryFeature } from '../types';
 import { useCountries } from '../use-countries/use-countries';
 import { useProjection } from './use-projection';
 
@@ -37,15 +38,23 @@ function Globe(props: GlobeProps) {
 
   const styles = createStyles(className, colors);
 
+  const handleCountryClick = (country: CountryFeature) => {
+    rotateTo(country.properties.position);
+    console.log(country.properties);
+  };
+
   return (
     <svg ref={svgRef} width={width} height={height} className={className}>
       <style>{styles}</style>
       <circle cx={cx} cy={cy} r={r} className="ocean" />
       {countries.map(country => (
-        <path
-          className="country"
-          onClick={() => rotateTo(country.properties.position)}
-        />
+        <g key={country.id}>
+          <title>{country.properties.name}</title>
+          <path
+            className="country"
+            onClick={() => handleCountryClick(country)}
+          />
+        </g>
       ))}
     </svg>
   );

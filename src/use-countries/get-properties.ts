@@ -11,7 +11,7 @@ import { CountriesProperties, CountryProperties, Rotation } from '../types';
  * - longitude
  */
 const countriesPropertiesUrl =
-  'https://gist.githubusercontent.com/sitek94/d1c99f4b1936ad047602cc569d30db6b/raw/countries.csv';
+  'https://gist.githubusercontent.com/sitek94/d1c99f4b1936ad047602cc569d30db6b/raw/1d11b02a553634ea708e36bc31557482a28cfac1/countries.csv';
 
 type Columns = 'id' | 'name' | 'latitude' | 'longitude';
 
@@ -32,8 +32,8 @@ export const notFoundCountry: CountryProperties = {
  * Fetches the CSV file and transforms it
  */
 export async function getProperties(): Promise<CountriesProperties> {
-  return csv<Columns>(countriesPropertiesUrl).then(data =>
-    data.map(row => {
+  return csv<Columns>(countriesPropertiesUrl).then(data => {
+    return data.map(row => {
       const { id, name, latitude, longitude } = row;
 
       // There are no missing fields in the dataset but just in case set
@@ -47,6 +47,6 @@ export async function getProperties(): Promise<CountriesProperties> {
         name,
         position: [Number(latitude), Number(longitude)],
       };
-    }),
-  );
+    });
+  });
 }
