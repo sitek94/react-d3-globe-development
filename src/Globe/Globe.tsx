@@ -1,19 +1,21 @@
 import * as React from 'react';
 
-import { styles } from '../styles';
+import pkg from '../../package.json';
+import { createStyles, Colors } from '../styles/create-styles';
 import { useCountries } from '../use-countries/use-countries';
 import { useProjection } from './use-projection';
 
+let index = 0;
 export interface GlobeProps {
   className?: string;
-  /**
-   * A shorthand for height and width of the SVG element
-   */
+  colors?: Colors;
   size?: number;
 }
 
 function Globe(props: GlobeProps) {
-  const { className, size = 400 } = props;
+  index++;
+
+  const { colors, size = 400 } = props;
 
   const width = size;
   const height = size;
@@ -31,16 +33,17 @@ function Globe(props: GlobeProps) {
     countries,
   });
 
-  const classNames = `react-d3-globe ${className}`;
+  const className = `${pkg.name}-${index}`;
+
+  const styles = createStyles(className, colors);
 
   return (
-    <svg ref={svgRef} width={width} height={height} className={classNames}>
+    <svg ref={svgRef} width={width} height={height} className={className}>
       <style>{styles}</style>
       <circle cx={cx} cy={cy} r={r} className="ocean" />
       {countries.map(country => (
         <path
           className="country"
-          key={country.id}
           onClick={() => rotateTo(country.properties.position)}
         />
       ))}

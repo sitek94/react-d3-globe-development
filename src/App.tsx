@@ -1,13 +1,16 @@
 import { Globe } from './Globe/Globe';
-import './App.css' 
+
+import * as schemes from './styles/schemes'
 
 function App() {
   return (
     <div>
       <Globe size={500} />
-      <Globe className="orange" size={450} />
-      <Globe className="violet" size={375} />
-      <Globe className="blue" size={300} />
+      <Globe colors={schemes.orange} size={450} />
+      <Globe colors={schemes.purple} size={375} />
+      <Globe colors={schemes.dark} size={450} />
+      <Globe colors={schemes.blue} size={400} />
+      <Globe colors={schemes.light} size={300} />
     </div>
   );
 }
